@@ -320,13 +320,16 @@ elif options == "EDA (Analysis)":
         st.download_button("Download HTML", html_content.encode("utf-8"), "Titanic_Report.html", "text/html")
 
 # -------------------------
-# SECTION: PREDICTION
+# SECTION: PREDICTION (Updated)
 # -------------------------
 elif options == "Prediction":
     st.title("🔮 Survival Prediction")
-    st.markdown("Adjust the values below to see the prediction.")
+    st.markdown("Configure the passenger details below to predict survival.")
 
     if model:
+        # Display model info based on user provided data
+        st.success("Model loaded successfully! Features: Pclass, Sex, Age, Fare, Family Size")
+        
         with st.form("predict_form"):
             c1, c2 = st.columns(2)
             with c1:
@@ -334,24 +337,27 @@ elif options == "Prediction":
                 sex_inp = st.radio("Gender", ["Male", "Female"])
                 age = st.slider("Age", 0, 100, 25)
             with c2:
-                sibsp = st.number_input("Siblings/Spouses", 0, 10, 0)
-                parch = st.number_input("Parents/Children", 0, 10, 0)
-                fare = st.number_input("Fare Amount", 0.0, 600.0, 32.0)
+                # Updated to use Family Size directly as per feature selection
+                family_size = st.number_input("Family Size (including yourself)", 
+                                            min_value=1, max_value=11, value=1, 
+                                            help="1 = Traveling alone. sum of siblings + parents + 1")
+                fare = st.number_input("Fare Amount (£)", 0.0, 600.0, 32.0)
             
             submit = st.form_submit_button("Predict Survival")
         
         if submit:
-            sex_val = 1 if sex_inp == "Male" else 0
-            fam_size = sibsp + parch + 1
+            # Map inputs to model features: ['pclass', 'sex', 'age', 'fare', 'family_size']
+            sex_val = 1 if sex_inp == "Male" else 0  # 1=Male, 0=Female mapping
             
             input_data = pd.DataFrame({
                 'pclass': [pclass],
                 'sex': [sex_val],
                 'age': [age],
                 'fare': [fare],
-                'family_size': [fam_size]
+                'family_size': [family_size]
             })
             
+            # Predict
             pred = model.predict(input_data)[0]
             prob = model.predict_proba(input_data)[0][1]
             
@@ -370,4 +376,4 @@ elif options == "Prediction":
                 st.progress(prob)
                 st.caption(f"Confidence: {prob*100:.2f}%")
     else:
-        st.error("Model file not found.")
+        st.error("Model file not found. Please ensure 'Titanic_ML_model.pkl' is in the directory.")
