@@ -1,12 +1,15 @@
-🚢 Titanic ML Dashboard – Project Overview
-Direct Live Link: https://titanic-ml-project-by-aniket-gund.streamlit.app/
+#🚢 Titanic ML Dashboard – Project Overview
 
-🎯 Objective
+##Direct Live Link: https://titanic-ml-project-by-aniket-gund.streamlit.app/
+
+##🎯 Objective
+
 The goal of this Titanic Survival Prediction Project is to investigate one of history’s most infamous shipwrecks through the lens of data science. By analyzing 541 passenger records, this dashboard uncovers the critical factors—such as socio-economic status, gender, age, and family size—that determined who survived.
 
 Beyond analysis, this project deploys a Random Forest Machine Learning model to predict the survival probability of any hypothetical passenger, turning historical data into actionable predictive insights.
 
-🔍 Key Questions Explored in the EDA
+##🔍 Key Questions Explored in the EDA:
+
 1️⃣ How does Gender influence survival chances?
 
 Visual: Bar Chart (Survival Rate by Sex)
@@ -57,7 +60,7 @@ Insight: Provides a numeric snapshot (Mean, Std Dev, Min, Max) for all numerical
 
 9️⃣ What insights can be derived overall?
 
-Insights Summary (Auto-Generated):
+##Insights Summary (Auto-Generated):
 
 Gender Gap: Confirms females were ~3x more likely to survive than males.
 
@@ -65,14 +68,14 @@ Class Privilege: Higher fares and better classes correlated directly with safety
 
 Family Factor: Small families (2-4 members) often fared better than solo travelers or large families.
 
-🧠 Machine Learning Model
+##🧠 Machine Learning Model
 Algorithm: Random Forest Classifier
 
 Features Used: Passenger Class, Sex, Age, Fare, Family Size
 
 Function: Accepts user inputs to calculate a real-time Survival Probability Score (e.g., "85% Confidence").
 
-📥 Export Options Available
+##📥 Export Options Available
 The dashboard includes robust reporting features:
 
 ✔ Download Interactive HTML Snapshot: Generates a standalone HTML report containing all current charts, insights, and summaries—preserving interactivity (zoom, hover) outside the app.
