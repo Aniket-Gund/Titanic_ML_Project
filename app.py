@@ -83,19 +83,10 @@ if options == "Home":
     # Restored V1 Layout + New Text
     st.markdown("""
     <div class="main-text">
-    Welcome to the <b>Titanic Survival Prediction App</b>. This project explores the famous Titanic dataset to understand the factors that influenced survival and predicts whether a passenger would survive based on their details.
-    
-    ### 📂 Project Workflow:
-    1.  <b>Data Understanding</b>: Analyzing rows, columns, and data types.
-    2.  <b>Data Cleaning</b>: Handling missing values and outliers.
-    3.  <b>EDA (Exploratory Data Analysis)</b>: Visualizing relationships between features.
-    4.  <b>Machine Learning</b>: Training a Random Forest Classifier.
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("---")
-    
-    st.subheader("ℹ️ About this file")
+    Welcome to the <b>Titanic Survival Prediction App</b>. Analyzed the Titanic dataset to uncover key survival factors and built a model to predict passenger survival.
+
+
+     ### ℹ️ About this file
     st.info("""
     The sinking of the Titanic is one of the most infamous shipwrecks in history.
     
@@ -105,14 +96,20 @@ if options == "Home":
     
     In this challenge, we ask you to build a predictive model that answers the question: “what sorts of people were more likely to survive?” using passenger data (ie name, age, gender, socio-economic class, etc).
     """)
+   
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+     ### 📂 Project Workflow:
+    1.  <b>Data Understanding</b>: Analyzing rows, columns, and data types.
+    2.  <b>Data Cleaning</b>: Handling missing values and outliers.
+    3.  <b>EDA (Exploratory Data Analysis)</b>: Visualizing relationships between features.
+    4.  <b>Machine Learning</b>: Training a Random Forest Classifier.
+   
 
     if not df.empty:
-        st.markdown("### 📊 Dataset Snapshot")
-        col1, col2, col3 = st.columns(3)
-        col1.metric("Total Passengers", len(df))
-        col2.metric("Survival Rate", f"{df['survived'].mean()*100:.2f}%")
-        col3.metric("Features", len(df.columns))
-
+       
 # -------------------------
 # SECTION: EDA (Analysis)
 # -------------------------
