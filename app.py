@@ -265,23 +265,39 @@ elif options == "EDA (Analysis)":
         st.plotly_chart(fig_corr, use_container_width=True)
         figures.append(fig_corr)
 
-    # --- Insights ---
+   # --- Summary & Insights ---
     st.markdown("---")
     st.subheader("💡 Analysis Summary")
     
     insights = []
-    # Automated logic
+    
+    # 1. Gender Insight
     f_surv = df_view[df_view['sex']==0]['survived'].mean()
     m_surv = df_view[df_view['sex']==1]['survived'].mean()
-    insights.append(f"**Gender Gap:** Females had a higher survival rate ({f_surv:.1%}) vs Males ({m_surv:.1%}).")
+    insights.append(f"**Gender Gap:** Females had a significantly higher survival rate ({f_surv:.1%}) compared to males ({m_surv:.1%}).")
     
+    # 2. Class Insight
     c1_surv = df_view[df_view['pclass']==1]['survived'].mean()
     c3_surv = df_view[df_view['pclass']==3]['survived'].mean()
-    insights.append(f"**Class Privilege:** 1st Class passengers ({c1_surv:.1%}) survived more than 3rd Class ({c3_surv:.1%}).")
+    insights.append(f"**Class Privilege:** First-class passengers were much more likely to survive ({c1_surv:.1%}) than those in third class ({c3_surv:.1%}).")
+    
+    # 3. Combined Insight
+    try:
+        f_c1 = df_view[(df_view['sex']==0) & (df_view['pclass']==1)]['survived'].mean()
+        m_c3 = df_view[(df_view['sex']==1) & (df_view['pclass']==3)]['survived'].mean()
+        insights.append(f"**Extreme Cases:** First-class females had the highest survival chance (~{f_c1:.1%}), while third-class males had the lowest (~{m_c3:.1%}).")
+    except:
+        pass
+
+    # 4. Family Size Insight
+    if 'family_size' in df_view.columns:
+        single = df_view[df_view['family_size']==1]['survived'].mean()
+        small_fam = df_view[(df_view['family_size'] > 1) & (df_view['family_size'] <= 4)]['survived'].mean()
+        large_fam = df_view[df_view['family_size'] > 4]['survived'].mean()
+        insights.append(f"**Family Factor:** Small families (2-4 members) survived better ({small_fam:.1%}) than single travelers ({single:.1%}) or large families ({large_fam:.1%}).")
 
     for i in insights:
         st.write(f"✔️ {i}")
-
     # --- Download HTML ---
     st.markdown("---")
     if st.button("⬇️ Download Analysis Report (HTML)"):
