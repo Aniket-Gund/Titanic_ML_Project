@@ -320,34 +320,43 @@ elif options == "EDA (Analysis)":
         st.download_button("Download HTML", html_content.encode("utf-8"), "Titanic_Report.html", "text/html")
 
 # -------------------------
-# SECTION: PREDICTION (Updated)
+# SECTION: PREDICTION (Updated Layout)
 # -------------------------
 elif options == "Prediction":
     st.title("🔮 Survival Prediction")
     st.markdown("Configure the passenger details below to predict survival.")
 
     if model:
-        # Display model info based on user provided data
-        st.success("Model loaded successfully! Features: Pclass, Sex, Age, Fare, Family Size")
+        # Layout: Use columns to center the form (1-2-1 ratio makes it 'proper size')
+        left, center, right = st.columns([1, 2, 1])
         
-        with st.form("predict_form"):
-            c1, c2 = st.columns(2)
-            with c1:
-                pclass = st.selectbox("Passenger Class", [1, 2, 3], help="1=1st, 2=2nd, 3=3rd Class")
-                sex_inp = st.radio("Gender", ["Male", "Female"])
-                age = st.slider("Age", 0, 100, 25)
-            with c2:
-                # Updated to use Family Size directly as per feature selection
-                family_size = st.number_input("Family Size (including yourself)", 
-                                            min_value=1, max_value=11, value=1, 
-                                            help="1 = Traveling alone. sum of siblings + parents + 1")
-                fare = st.number_input("Fare Amount (£)", 0.0, 600.0, 32.0)
-            
-            submit = st.form_submit_button("Predict Survival")
+        with center:
+            with st.form("predict_form"):
+                st.subheader("Enter Passenger Details")
+                
+                # 1. Passenger Class
+                pclass = st.selectbox("1. Passenger Class (Pclass)", [1, 2, 3], 
+                                      help="1 = Upper, 2 = Middle, 3 = Lower")
+                
+                # 2. Gender
+                sex_inp = st.radio("2. Gender", ["Male", "Female"], horizontal=True)
+                
+                # 3. Age
+                age = st.slider("3. Age", 0, 100, 25)
+                
+                # 4. Fare
+                fare = st.number_input("4. Fare Amount (£)", min_value=0.0, max_value=600.0, value=32.0)
+                
+                # 5. Family Size
+                family_size = st.number_input("5. Family Size", min_value=1, max_value=11, value=1, 
+                                              help="Includes siblings, spouses, parents, children, and yourself.")
+                
+                st.markdown("---")
+                submit = st.form_submit_button("Predict Survival", use_container_width=True)
         
         if submit:
             # Map inputs to model features: ['pclass', 'sex', 'age', 'fare', 'family_size']
-            sex_val = 1 if sex_inp == "Male" else 0  # 1=Male, 0=Female mapping
+            sex_val = 1 if sex_inp == "Male" else 0
             
             input_data = pd.DataFrame({
                 'pclass': [pclass],
@@ -361,19 +370,15 @@ elif options == "Prediction":
             pred = model.predict(input_data)[0]
             prob = model.predict_proba(input_data)[0][1]
             
+            # Display Results (Centered below form)
             st.markdown("---")
-            col_res, col_prob = st.columns([1, 2])
-            
-            with col_res:
+            c1, c2, c3 = st.columns([1, 2, 1])
+            with c2:
                 if pred == 1:
-                    st.success("SURVIVED! 🎉")
+                    st.success(f"**Prediction: SURVIVED** 🎉 (Confidence: {prob:.1%})")
                     st.balloons()
                 else:
-                    st.error("DID NOT SURVIVE 💀")
-            
-            with col_prob:
-                st.write("Survival Probability:")
-                st.progress(prob)
-                st.caption(f"Confidence: {prob*100:.2f}%")
+                    st.error(f"**Prediction: DID NOT SURVIVE** 💀 (Confidence: {1-prob:.1%})")
+                    
     else:
         st.error("Model file not found. Please ensure 'Titanic_ML_model.pkl' is in the directory.")
