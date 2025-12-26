@@ -265,7 +265,7 @@ elif options == "EDA (Analysis)":
         st.plotly_chart(fig_corr, use_container_width=True)
         figures.append(fig_corr)
 
-   # --- Summary & Insights ---
+  # --- Summary & Insights (Updated) ---
     st.markdown("---")
     st.subheader("💡 Analysis Summary")
     
@@ -298,7 +298,8 @@ elif options == "EDA (Analysis)":
 
     for i in insights:
         st.write(f"✔️ {i}")
-    # --- Download HTML ---
+
+    # --- Download HTML (Updated) ---
     st.markdown("---")
     if st.button("⬇️ Download Analysis Report (HTML)"):
         html_content = f"""
