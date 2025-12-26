@@ -1,202 +1,245 @@
-# app.py
-"""
-Centered UI Titanic Survival Prediction — Clean, Interview-Ready
-End-to-End ML Project Showcase (EDA → Prediction)
-"""
-
 import streamlit as st
 import pandas as pd
-import numpy as np
-import pickle
-import os
-import matplotlib.pyplot as plt
 import seaborn as sns
+import matplotlib.pyplot as plt
+import pickle
+import numpy as np
 
-# ================== PAGE SETUP ==================
-st.set_page_config(page_title="Titanic ML Project", layout="wide")
-
-# ================== CUSTOM CSS ==================
-st.markdown(
-    """
-    <style>
-    .stApp {
-        background-color: #0b0c0d;
-        color: #e6eef8;
-        font-family: "Segoe UI", Roboto, Arial;
-    }
-    .center-container {
-        max-width: 1100px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    .big-title {
-        font-size: 44px;
-        font-weight: 800;
-        text-align: center;
-        margin-bottom: 5px;
-    }
-    .subtitle {
-        text-align: center;
-        color: #cbd5e1;
-        margin-bottom: 35px;
-    }
-    .card {
-        background: rgba(255,255,255,0.02);
-        border-radius: 14px;
-        padding: 24px;
-        border: 1px solid rgba(255,255,255,0.05);
-        margin-bottom: 22px;
-    }
-    .result-box {
-        background: #0f3d2e;
-        border-radius: 12px;
-        padding: 18px;
-        font-size: 20px;
-        font-weight: 700;
-        color: #d7f6e8;
-        text-align: center;
-        margin-top: 20px;
-    }
-    .footer {
-        color: #9aa4b2;
-        font-size: 13px;
-        text-align: center;
-        margin-top: 35px;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
+# Set Page Configuration
+st.set_page_config(
+    page_title="Titanic ML Project",
+    page_icon="🚢",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
-# ================== TITLE ==================
-st.markdown('<div class="big-title">🚢 Titanic Survival Prediction</div>', unsafe_allow_html=True)
-st.markdown('<div class="subtitle">ML Project Showcase — Data Understanding → EDA → Prediction</div>', unsafe_allow_html=True)
+# --- Custom CSS for Styling ---
+st.markdown("""
+    <style>
+    .main {
+        background-color: #f5f5f5;
+    }
+    .stButton>button {
+        width: 100%;
+        background-color: #ff4b4b;
+        color: white;
+    }
+    .stMetric {
+        background-color: white;
+        padding: 15px;
+        border-radius: 10px;
+        box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+    }
+    h1, h2, h3 {
+        color: #2c3e50;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-# ================== FILE PATHS ==================
-DATA_FILE = "titanic_updated.csv"
-MODEL_FILE = "Titanic_ML_model.pkl"
-
-if not os.path.exists(DATA_FILE) or not os.path.exists(MODEL_FILE):
-    st.error("Required data/model files not found in project directory.")
-    st.stop()
-
-# ================== LOAD DATA & MODEL ==================
+# --- Load Data and Model ---
 @st.cache_data
 def load_data():
-    return pd.read_csv(DATA_FILE)
+    try:
+        df = pd.read_csv("titanic_updated.csv")
+        return df
+    except FileNotFoundError:
+        st.error("File 'titanic_updated.csv' not found. Please upload it.")
+        return None
 
 @st.cache_resource
 def load_model():
-    with open(MODEL_FILE, "rb") as f:
-        return pickle.load(f)
+    try:
+        model = pickle.load(open("Titanic_ML_model.pkl", "rb"))
+        return model
+    except FileNotFoundError:
+        st.error("File 'Titanic_ML_model.pkl' not found. Please upload it.")
+        return None
 
 df = load_data()
 model = load_model()
 
-# ================== NAVIGATION ==================
-section = st.sidebar.radio("Navigation", ["📊 Dataset Understanding (EDA)", "🤖 Survival Prediction"])
+# --- Sidebar Navigation ---
+st.sidebar.title("🚢 Titanic Project")
+st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/f/fd/RMS_Titanic_3.jpg", use_container_width=True)
+options = st.sidebar.radio("Navigate", ["Home", "EDA (Analysis)", "Prediction"])
 
-# ======================================================
-# ====================== EDA ============================
-# ======================================================
-if section == "📊 Dataset Understanding (EDA)":
-    st.markdown('<div class="center-container">', unsafe_allow_html=True)
+st.sidebar.markdown("---")
+st.sidebar.info("Project based on Titanic Dataset analysis and survival prediction.")
 
-    # Overview
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    c1, c2, c3 = st.columns(3)
-    c1.metric("Passengers", df.shape[0])
-    c2.metric("Features", df.shape[1])
-    c3.metric("Survival Rate", f"{df['Survived'].mean()*100:.2f}%")
-    st.markdown('</div>', unsafe_allow_html=True)
+# --- HOME SECTION ---
+if options == "Home":
+    st.title("🚢 Titanic Machine Learning Project")
+    st.markdown("""
+    Welcome to the **Titanic Survival Prediction App**. This project explores the famous Titanic dataset to understand the factors that influenced survival and predicts whether a passenger would survive based on their details.
+    
+    ### 📂 Project Workflow:
+    1.  **Data Understanding**: Analyzing rows, columns, and data types.
+    2.  **Data Cleaning**: Handling missing values and outliers.
+    3.  **EDA (Exploratory Data Analysis)**: Visualizing relationships between features.
+    4.  **Machine Learning**: Training a Random Forest Classifier.
+    
+    👈 **Use the sidebar to navigate to the EDA or Prediction sections.**
+    """)
+    
+    if df is not None:
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Total Passengers", len(df))
+        col2.metric("Survival Rate", f"{df['survived'].mean()*100:.2f}%")
+        col3.metric("Features", len(df.columns))
 
-    # Survival Distribution
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.subheader("Survival Distribution")
-    fig, ax = plt.subplots()
-    sns.countplot(x="Survived", data=df, ax=ax)
-    ax.set_xticklabels(["Not Survived", "Survived"])
-    st.pyplot(fig)
-    st.caption("More passengers did not survive, showing slight class imbalance.")
-    st.markdown('</div>', unsafe_allow_html=True)
+# --- EDA SECTION ---
+elif options == "EDA (Analysis)":
+    st.title("📊 Exploratory Data Analysis")
+    
+    if df is not None:
+        # Tabs for better organization
+        tab1, tab2, tab3 = st.tabs(["Dataset Overview", "Visualizations", "Key Insights & Q&A"])
+        
+        with tab1:
+            st.subheader("Dataset Preview")
+            st.dataframe(df.head())
+            
+            st.subheader("Statistical Summary")
+            st.write(df.describe())
+            
+            st.subheader("Data Info")
+            buffer = pd.DataFrame(df.dtypes, columns=['Data Type']).astype(str)
+            st.table(buffer)
 
-    # Gender vs Survival
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.subheader("Gender vs Survival")
-    fig, ax = plt.subplots()
-    sns.countplot(x="Sex", hue="Survived", data=df, ax=ax)
-    st.pyplot(fig)
-    st.caption("Females had a much higher survival probability.")
-    st.markdown('</div>', unsafe_allow_html=True)
+        with tab2:
+            st.subheader("📈 Data Visualizations")
+            
+            # Row 1: Survival Distribution & Sex Distribution
+            col1, col2 = st.columns(2)
+            with col1:
+                st.markdown("**Survival Distribution**")
+                fig, ax = plt.subplots()
+                sns.countplot(x='survived', data=df, palette=['red', 'green'], ax=ax)
+                ax.set_xticklabels(['Not Survived', 'Survived'])
+                st.pyplot(fig)
+            
+            with col2:
+                st.markdown("**Gender Distribution**")
+                fig, ax = plt.subplots()
+                df['sex'].value_counts().plot.pie(autopct='%1.1f%%', labels=['Female', 'Male'], colors=['pink', 'skyblue'], ax=ax)
+                st.pyplot(fig)
 
-    # Class vs Survival
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.subheader("Passenger Class Impact")
-    fig, ax = plt.subplots()
-    sns.countplot(x="Pclass", hue="Survived", data=df, ax=ax)
-    st.pyplot(fig)
-    st.caption("First-class passengers were prioritized and survived more.")
-    st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown("---")
 
-    # Age
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.subheader("Age Distribution")
-    fig, ax = plt.subplots()
-    sns.histplot(df["Age"], kde=True, ax=ax)
-    st.pyplot(fig)
-    st.caption("Children and younger passengers had better chances.")
-    st.markdown('</div>', unsafe_allow_html=True)
+            # Row 2: Survival by Class & Sex
+            col3, col4 = st.columns(2)
+            with col3:
+                st.markdown("**Survival Rate by Pclass**")
+                fig, ax = plt.subplots()
+                sns.barplot(x='pclass', y='survived', data=df, palette='viridis', ax=ax)
+                ax.set_ylabel("Survival Probability")
+                st.pyplot(fig)
+            
+            with col4:
+                st.markdown("**Survival Rate by Sex**")
+                fig, ax = plt.subplots()
+                sns.barplot(x='sex', y='survived', data=df, palette=['pink', 'grey'], ax=ax)
+                ax.set_xticklabels(['Female', 'Male']) # Assuming 0=Female, 1=Male based on analysis
+                ax.set_ylabel("Survival Probability")
+                st.pyplot(fig)
 
-    # Correlation
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.subheader("Correlation Heatmap")
-    fig, ax = plt.subplots(figsize=(8, 5))
-    sns.heatmap(df.corr(), annot=True, cmap="coolwarm", ax=ax)
-    st.pyplot(fig)
-    st.markdown('</div>', unsafe_allow_html=True)
+            st.markdown("---")
 
-    st.success("EDA Insight Summary: Survival is strongly influenced by Gender, Passenger Class, Age, and Fare. These features were used for model training.")
-    st.markdown('</div>', unsafe_allow_html=True)
+            # Row 3: Age Distribution & Correlation
+            col5, col6 = st.columns(2)
+            with col5:
+                st.markdown("**Age Distribution**")
+                fig, ax = plt.subplots()
+                sns.histplot(df['age'], kde=True, color='purple', bins=30, ax=ax)
+                st.pyplot(fig)
+            
+            with col6:
+                st.markdown("**Correlation Heatmap**")
+                fig, ax = plt.subplots()
+                # Select only numeric columns for correlation
+                numeric_df = df.select_dtypes(include=[np.number])
+                sns.heatmap(numeric_df.corr(), annot=True, cmap='coolwarm', fmt=".2f", ax=ax)
+                st.pyplot(fig)
+            
+            st.markdown("---")
+            
+            # Row 4: Complex Relations
+            st.markdown("**Survival by Pclass and Sex**")
+            fig = sns.catplot(x='pclass', y='survived', hue='sex', data=df, kind='bar', palette={0: 'pink', 1: 'grey'}, height=4, aspect=2)
+            # Customizing legend
+            new_labels = ['Female', 'Male']
+            for t, l in zip(fig._legend.texts, new_labels): t.set_text(l)
+            st.pyplot(fig)
 
-# ======================================================
-# ================== PREDICTION =========================
-# ======================================================
-else:
-    st.markdown('<div class="center-container">', unsafe_allow_html=True)
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.subheader("Passenger Details")
+        with tab3:
+            st.subheader("💡 Key Insights & Summary")
+            st.markdown("""
+            Based on the analysis performed on the dataset:
+            
+            1.  **Gender Impact**: Females had a significantly higher chance of survival compared to males.
+            2.  **Class Distinction**: Passengers in 1st Class were more likely to survive than those in 3rd Class, indicating socio-economic status played a role.
+            3.  **Age Factor**: Children (Age < 10) had higher survival rates. The age distribution shows a majority of passengers were young adults (20-30).
+            4.  **Family Size**: Small families (size 2-4) tended to have better survival rates than those traveling alone or in very large families.
+            5.  **Fare**: Higher fares correlated positively with survival, likely linked to Passenger Class.
+            """)
+            
+            st.subheader("❓ Q&A Section")
+            with st.expander("What is the overall survival rate?"):
+                st.write(f"The overall survival rate is approximately {df['survived'].mean()*100:.1f}%.")
+            with st.expander("Which gender survived more?"):
+                st.write("Females survived more often than males.")
+            with st.expander("Does Age affect survival?"):
+                st.write("Yes, younger children had a better survival rate, and priority was likely given to them.")
 
-    col1, col2 = st.columns(2)
-    with col1:
-        Pclass = st.selectbox("Passenger Class", [1, 2, 3])
-        Sex = st.selectbox("Sex", ["male", "female"])
-        Age = st.slider("Age", 0, 80, 30)
-        SibSp = st.number_input("Siblings / Spouses", 0, 8, 0)
-    with col2:
-        Parch = st.number_input("Parents / Children", 0, 6, 0)
-        Fare = st.slider("Fare", 0.0, 500.0, 50.0)
-        Embarked = st.selectbox("Embarked", ["C", "Q", "S"])
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # Encoding
-    Sex = 1 if Sex == "male" else 0
-    Embarked = {"C": 0, "Q": 1, "S": 2}[Embarked]
-
-    col_btn = st.columns([3, 6, 3])[1]
-    with col_btn:
-        predict_clicked = st.button("🔮 Predict Survival")
-
-    if predict_clicked:
-        X = np.array([[Pclass, Sex, Age, SibSp, Parch, Fare, Embarked]])
-        pred = model.predict(X)[0]
-
-        if pred == 1:
-            st.markdown('<div class="result-box">Passenger is likely to SURVIVE</div>', unsafe_allow_html=True)
-        else:
-            st.markdown('<div class="result-box">Passenger is likely to NOT SURVIVE</div>', unsafe_allow_html=True)
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-# ================== FOOTER ==================
-st.markdown('<div class="footer">Built with Streamlit • Machine Learning • Titanic Dataset</div>', unsafe_allow_html=True)
+# --- PREDICTION SECTION ---
+elif options == "Prediction":
+    st.title("🔮 Survival Prediction")
+    st.markdown("Enter passenger details below to check if they would have survived.")
+    
+    if model is not None:
+        with st.form("prediction_form"):
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                pclass = st.selectbox("Passenger Class (Pclass)", [1, 2, 3], help="1 = 1st, 2 = 2nd, 3 = 3rd")
+                sex_display = st.selectbox("Sex", ["Male", "Female"])
+                sex = 1 if sex_display == "Male" else 0  # Mapping: Male=1, Female=0
+                age = st.slider("Age", 0, 100, 25)
+            
+            with col2:
+                fare = st.number_input("Fare", min_value=0.0, max_value=600.0, value=32.0)
+                sibsp = st.number_input("Siblings/Spouses Aboard", min_value=0, max_value=10, value=0)
+                parch = st.number_input("Parents/Children Aboard", min_value=0, max_value=10, value=0)
+            
+            # Calculate Family Size (internal calculation as used in model training)
+            family_size = sibsp + parch + 1
+            
+            submit_btn = st.form_submit_button("Predict Survival")
+        
+        if submit_btn:
+            # Prepare input data matching the model's training features
+            # Features expected: ['pclass', 'sex', 'age', 'fare', 'family_size']
+            input_data = pd.DataFrame({
+                'pclass': [pclass],
+                'sex': [sex],
+                'age': [age],
+                'fare': [fare],
+                'family_size': [family_size]
+            })
+            
+            # Make Prediction
+            prediction = model.predict(input_data)[0]
+            probability = model.predict_proba(input_data)[0]
+            
+            st.markdown("---")
+            st.subheader("Prediction Result:")
+            
+            if prediction == 1:
+                st.success(f"**Result: SURVIVED** 🎉")
+                st.write(f"Probability of Survival: {probability[1]*100:.2f}%")
+                st.balloons()
+            else:
+                st.error(f"**Result: DID NOT SURVIVE** 💀")
+                st.write(f"Probability of Survival: {probability[1]*100:.2f}%")
+    else:
+        st.error("Model could not be loaded. Please check if the .pkl file is present.")
