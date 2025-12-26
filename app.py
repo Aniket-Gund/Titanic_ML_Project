@@ -9,14 +9,14 @@ from datetime import datetime
 # Page Config
 # -------------------------
 st.set_page_config(
-    page_title="Titanic ML Dashboard",
+    page_title="Titanic ML Project",
     page_icon="🚢",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
 # -------------------------
-# Custom CSS (Remove White Space & Styling)
+# Custom CSS
 # -------------------------
 st.markdown("""
     <style>
@@ -33,6 +33,10 @@ st.markdown("""
             border-radius: 5px;
             border-left: 5px solid #ff4b4b;
         }
+        .main-text {
+            font-size: 16px;
+            line-height: 1.6;
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -43,7 +47,6 @@ st.markdown("""
 def load_data():
     try:
         df = pd.read_csv("titanic_updated.csv")
-        # Ensure Age Group exists
         if 'age_group' not in df.columns:
             df['age_group'] = pd.cut(df['age'], bins=[0, 12, 18, 30, 45, 60, 100], 
                                      labels=['Child', 'Teen', 'Young Adult', 'Adult', 'Old', 'Elderly'])
@@ -65,32 +68,50 @@ model = load_model()
 # -------------------------
 # Sidebar Navigation
 # -------------------------
-st.sidebar.title("🚢 Titanic Dashboard")
+st.sidebar.title("🚢 Titanic Project")
 st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/f/fd/RMS_Titanic_3.jpg", use_container_width=True)
 options = st.sidebar.radio("Navigate", ["Home", "EDA (Analysis)", "Prediction"])
-
 st.sidebar.markdown("---")
-st.sidebar.info("Explore the Titanic dataset and predict survival.")
+st.sidebar.info("Titanic Survival Prediction & Analysis System")
 
 # -------------------------
 # SECTION: HOME
 # -------------------------
 if options == "Home":
-    st.title("Welcome to Titanic ML Project 🌊")
+    st.title("🚢 Titanic Machine Learning Project")
+    
+    # Restored V1 Layout + New Text
     st.markdown("""
-    This app provides a comprehensive analysis of the Titanic dataset and a Machine Learning model to predict passenger survival.
+    <div class="main-text">
+    Welcome to the <b>Titanic Survival Prediction App</b>. This project explores the famous Titanic dataset to understand the factors that influenced survival and predicts whether a passenger would survive based on their details.
     
-    ### 🚀 Key Features:
-    * **Data Analysis:** Interactive charts to understand survival factors.
-    * **Pattern Recognition:** identifying how Class, Sex, and Age affected survival.
-    * **Live Prediction:** Test the trained Random Forest model.
+    ### 📂 Project Workflow:
+    1.  <b>Data Understanding</b>: Analyzing rows, columns, and data types.
+    2.  <b>Data Cleaning</b>: Handling missing values and outliers.
+    3.  <b>EDA (Exploratory Data Analysis)</b>: Visualizing relationships between features.
+    4.  <b>Machine Learning</b>: Training a Random Forest Classifier.
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("---")
+    
+    st.subheader("ℹ️ About this file")
+    st.info("""
+    The sinking of the Titanic is one of the most infamous shipwrecks in history.
+    
+    On April 15, 1912, during her maiden voyage, the widely considered “unsinkable” RMS Titanic sank after colliding with an iceberg. Unfortunately, there weren’t enough lifeboats for everyone on board, resulting in the death of 1502 out of 2224 passengers and crew.
+    
+    While there was some element of luck involved in surviving, it seems some groups of people were more likely to survive than others.
+    
+    In this challenge, we ask you to build a predictive model that answers the question: “what sorts of people were more likely to survive?” using passenger data (ie name, age, gender, socio-economic class, etc).
     """)
-    
+
     if not df.empty:
-        c1, c2, c3 = st.columns(3)
-        c1.metric("Total Passengers", len(df))
-        c2.metric("Overall Survival Rate", f"{df['survived'].mean()*100:.1f}%")
-        c3.metric("Average Fare", f"£{df['fare'].mean():.2f}")
+        st.markdown("### 📊 Dataset Snapshot")
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Total Passengers", len(df))
+        col2.metric("Survival Rate", f"{df['survived'].mean()*100:.2f}%")
+        col3.metric("Features", len(df.columns))
 
 # -------------------------
 # SECTION: EDA (Analysis)
@@ -101,7 +122,7 @@ elif options == "EDA (Analysis)":
     if df.empty:
         st.stop()
 
-    # --- Sidebar Filters ---
+    # --- Sidebar Filters (Preserved) ---
     st.sidebar.header("🔍 Filter Data")
     pclass_opts = sorted(df['pclass'].unique())
     sel_pclass = st.sidebar.multiselect("Passenger Class", pclass_opts, default=pclass_opts)
@@ -110,7 +131,6 @@ elif options == "EDA (Analysis)":
     sex_labels = {0: 'Female', 1: 'Male'}
     sel_sex = st.sidebar.multiselect("Gender", sex_opts, format_func=lambda x: sex_labels[x], default=sex_opts)
     
-    # Filter Logic
     df_view = df.copy()
     if sel_pclass:
         df_view = df_view[df_view['pclass'].isin(sel_pclass)]
@@ -128,12 +148,11 @@ elif options == "EDA (Analysis)":
     
     figures = []
 
-    # --- ROW 1: Survival Rate by Sex & Gender Dist ---
+    # --- ROW 1: Gender Analysis ---
     c1, c2 = st.columns(2)
     
     with c1:
         st.subheader("Survival Rate by Sex")
-        # Calculate survival rate by sex
         sex_survival = df_view.groupby('sex')['survived'].mean().reset_index()
         sex_survival['Gender'] = sex_survival['sex'].map({0: 'Female', 1: 'Male'})
         
@@ -149,27 +168,42 @@ elif options == "EDA (Analysis)":
         figures.append(fig_sex_rate)
 
     with c2:
-        st.subheader("Gender Distribution")
-        df_view['Gender_Label'] = df_view['sex'].map({0: 'Female', 1: 'Male'})
-        fig_gender = px.histogram(
-            df_view, x="Gender_Label", 
-            color="survived",
-            color_discrete_map={0: '#d62728', 1: '#2ca02c'}, # Red (Dead), Green (Alive)
-            barmode='group',
-            title="Count of Passengers by Gender"
+        st.subheader("Gender Imbalance") # NEW
+        gender_counts = df_view['sex'].value_counts().reset_index()
+        gender_counts.columns = ['sex', 'count']
+        gender_counts['Gender'] = gender_counts['sex'].map({0: 'Female', 1: 'Male'})
+        
+        fig_gender_pie = px.pie(
+            gender_counts, values='count', names='Gender',
+            color='Gender',
+            color_discrete_map={'Female': '#ff9999', 'Male': '#66b3ff'},
+            title="Distribution of Male vs Female Passengers",
+            hole=0.4
         )
-        # Custom legend names
-        new_names = {'0': 'Not Survived', '1': 'Survived'}
-        fig_gender.for_each_trace(lambda t: t.update(name = new_names.get(t.name, t.name)))
-        st.plotly_chart(fig_gender, use_container_width=True)
-        figures.append(fig_gender)
+        st.plotly_chart(fig_gender_pie, use_container_width=True)
+        figures.append(fig_gender_pie)
 
-    # --- ROW 2: Treemap (Keeping as is, it's good for overview) ---
+    # --- ROW 2: Age Analysis (NEW) ---
+    st.subheader("Age Distribution")
+    # Preparing data for line chart
+    age_counts = df_view['age'].value_counts().sort_index().reset_index()
+    age_counts.columns = ['Age', 'Count']
+    
+    fig_age_line = px.line(
+        age_counts, x='Age', y='Count',
+        title="Passenger Age Distribution (Line Chart)",
+        markers=True,
+        template="plotly_white"
+    )
+    fig_age_line.update_traces(line_color='#8884d8')
+    st.plotly_chart(fig_age_line, use_container_width=True)
+    figures.append(fig_age_line)
+
+    # --- ROW 3: Hierarchy (Treemap) ---
     st.subheader("Hierarchy of Survival")
     if 'pclass' in df_view and 'sex' in df_view:
         df_tree = df_view.copy()
         df_tree['Gender'] = df_tree['sex'].map({0: 'Female', 1: 'Male'})
-        df_tree['Survived_Label'] = df_tree['survived'].map({0: 'No', 1: 'Yes'})
         
         tree_data = df_tree.groupby(['pclass', 'Gender', 'age_group'], observed=False).agg(
             Count=('survived', 'count'),
@@ -179,13 +213,13 @@ elif options == "EDA (Analysis)":
         fig_tree = px.treemap(
             tree_data, path=['pclass', 'Gender', 'age_group'], values='Count',
             color='Survived_Rate', 
-            color_continuous_scale='RdYlGn', # Red to Green scale
-            title="Drill Down: Class → Gender → Age Group (Color = Survival Rate)"
+            color_continuous_scale='RdYlGn', 
+            title="Drill Down: Class → Gender → Age Group"
         )
         st.plotly_chart(fig_tree, use_container_width=True)
         figures.append(fig_tree)
 
-    # --- ROW 3: Class & Class+Gender Analysis ---
+    # --- ROW 4: Class Analysis ---
     c3, c4 = st.columns(2)
     
     with c3:
@@ -194,18 +228,16 @@ elif options == "EDA (Analysis)":
         fig_class = px.bar(
             class_surv, x='pclass', y='survived',
             color='survived',
-            color_continuous_scale='Teal', # Better color combination
+            color_continuous_scale='Teal',
             title="Survival Probability per Class",
             text_auto='.1%'
         )
         fig_class.update_xaxes(type='category', title='Passenger Class')
-        fig_class.update_yaxes(title='Survival Rate')
         st.plotly_chart(fig_class, use_container_width=True)
         figures.append(fig_class)
         
     with c4:
         st.subheader("Survival by Class and Gender")
-        # Grouped bar chart
         class_sex_surv = df_view.groupby(['pclass', 'sex'])['survived'].mean().reset_index()
         class_sex_surv['Gender'] = class_sex_surv['sex'].map({0: 'Female', 1: 'Male'})
         
@@ -217,62 +249,42 @@ elif options == "EDA (Analysis)":
             text_auto='.1%'
         )
         fig_class_sex.update_xaxes(type='category', title='Passenger Class')
-        fig_class_sex.update_yaxes(title='Survival Rate')
         st.plotly_chart(fig_class_sex, use_container_width=True)
         figures.append(fig_class_sex)
 
-    # --- ROW 4: Correlation Matrix ---
+    # --- ROW 5: Correlation ---
     st.subheader("Feature Correlations")
-    # Drop sibsp and parch as requested, keep others
     cols_to_corr = ['survived', 'pclass', 'sex', 'age', 'fare', 'family_size']
-    # Check if cols exist
     available_cols = [c for c in cols_to_corr if c in df_view.columns]
     
     if available_cols:
         corr = df_view[available_cols].corr()
         fig_corr = px.imshow(
             corr, text_auto=".2f", aspect="auto",
-            color_continuous_scale="RdBu_r", # Red-Blue Diverging (standard for corr)
+            color_continuous_scale="RdBu_r",
             title="Correlation Heatmap (Excluding SibSp/Parch)"
         )
         st.plotly_chart(fig_corr, use_container_width=True)
         figures.append(fig_corr)
 
-    # --- Summary & Insights ---
+    # --- Insights ---
     st.markdown("---")
     st.subheader("💡 Analysis Summary")
     
     insights = []
-    
-    # 1. Gender Insight
+    # Automated logic
     f_surv = df_view[df_view['sex']==0]['survived'].mean()
     m_surv = df_view[df_view['sex']==1]['survived'].mean()
-    insights.append(f"**Gender Gap:** Females had a significantly higher survival rate ({f_surv:.1%}) compared to males ({m_surv:.1%}).")
+    insights.append(f"**Gender Gap:** Females had a higher survival rate ({f_surv:.1%}) vs Males ({m_surv:.1%}).")
     
-    # 2. Class Insight
     c1_surv = df_view[df_view['pclass']==1]['survived'].mean()
     c3_surv = df_view[df_view['pclass']==3]['survived'].mean()
-    insights.append(f"**Class Privilege:** First-class passengers were much more likely to survive ({c1_surv:.1%}) than those in third class ({c3_surv:.1%}).")
-    
-    # 3. Combined Insight
-    try:
-        f_c1 = df_view[(df_view['sex']==0) & (df_view['pclass']==1)]['survived'].mean()
-        m_c3 = df_view[(df_view['sex']==1) & (df_view['pclass']==3)]['survived'].mean()
-        insights.append(f"**Extreme Cases:** First-class females had the highest survival chance (~{f_c1:.1%}), while third-class males had the lowest (~{m_c3:.1%}).")
-    except:
-        pass
-
-    # 4. Family Size Insight
-    if 'family_size' in df_view.columns:
-        single = df_view[df_view['family_size']==1]['survived'].mean()
-        small_fam = df_view[(df_view['family_size'] > 1) & (df_view['family_size'] <= 4)]['survived'].mean()
-        large_fam = df_view[df_view['family_size'] > 4]['survived'].mean()
-        insights.append(f"**Family Factor:** Small families (2-4 members) survived better ({small_fam:.1%}) than single travelers ({single:.1%}) or large families ({large_fam:.1%}).")
+    insights.append(f"**Class Privilege:** 1st Class passengers ({c1_surv:.1%}) survived more than 3rd Class ({c3_surv:.1%}).")
 
     for i in insights:
         st.write(f"✔️ {i}")
 
-    # --- Download Report ---
+    # --- Download HTML ---
     st.markdown("---")
     if st.button("⬇️ Download Analysis Report (HTML)"):
         html_content = f"""
@@ -290,7 +302,6 @@ elif options == "EDA (Analysis)":
             html_content += fig.to_html(full_html=False, include_plotlyjs='cdn')
         
         html_content += "</body></html>"
-        
         st.download_button("Download HTML", html_content.encode("utf-8"), "Titanic_Report.html", "text/html")
 
 # -------------------------
@@ -318,7 +329,6 @@ elif options == "Prediction":
             sex_val = 1 if sex_inp == "Male" else 0
             fam_size = sibsp + parch + 1
             
-            # Create input DF
             input_data = pd.DataFrame({
                 'pclass': [pclass],
                 'sex': [sex_val],
