@@ -83,6 +83,7 @@ if options == "Home":
     st.markdown("""
     <div class="main-text">
     Welcome to the <b>Titanic Survival Prediction App</b>. Analyzed the Titanic dataset to uncover key survival factors and built a model to predict passenger survival.
+    </div>
     """, unsafe_allow_html=True)
     
     st.markdown("---")
@@ -101,16 +102,20 @@ if options == "Home":
 
     st.markdown("---")
 
-    # 2. Project Workflow
+    # 2. Project Workflow (Updated to Horizontal Layout)
     st.subheader("📂 Project Workflow")
-    st.markdown("""
-    <div class="main-text">
-    1.  <b>Data Understanding</b>: Analyzing rows, columns, and data types.
-    2.  <b>Data Cleaning</b>: Handling missing values and outliers.
-    3.  <b>EDA (Exploratory Data Analysis)</b>: Visualizing relationships between features.
-    4.  <b>Machine Learning</b>: Training a Random Forest Classifier.
-    </div>
-    """, unsafe_allow_html=True)
+    
+    # Using columns to display steps in a single horizontal line
+    c1, c2, c3, c4 = st.columns(4)
+    
+    with c1:
+        st.info("**1. Data Understanding**\nRows, columns & types")
+    with c2:
+        st.info("**2. Data Cleaning**\nMissing values & outliers")
+    with c3:
+        st.info("**3. EDA**\nVisualizing trends")
+    with c4:
+        st.success("**4. Machine Learning**\nRandom Forest Model")
        
 # -------------------------
 # SECTION: EDA (Analysis)
