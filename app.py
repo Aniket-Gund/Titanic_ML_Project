@@ -259,8 +259,9 @@ elif options == "EDA (Analysis)":
     # --- ROW 6: Statistical Summary ---
     st.markdown("---")
     st.subheader("📊 Statistical Summary")
-    st.dataframe(df_view.describe(), use_container_width=True)
-
+    # Exclude sibsp and parch from the summary
+    st.dataframe(df_view.drop(['sibsp', 'parch'], axis=1, errors='ignore').describe(), use_container_width=True)
+    
   # --- Summary & Insights (Updated) ---
     st.markdown("---")
     st.subheader("💡 Analysis Summary")
