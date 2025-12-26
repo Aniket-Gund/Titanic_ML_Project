@@ -80,12 +80,12 @@ st.sidebar.info("Titanic Survival Prediction & Analysis System")
 if options == "Home":
     st.title("🚢 Titanic Machine Learning Project")
     
-   st.markdown("""
-    <div class="main-text">
-    Welcome to the <b>Titanic Survival Prediction App</b>.<br>
-    Analyzed the Titanic dataset to uncover key survival factors and built a model to predict passenger survival.
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown("""
+     <div class="main-text">
+     Welcome to the <b>Titanic Survival Prediction App</b>.<br>
+     Analyzed the Titanic dataset to uncover key survival factors and built a model to predict passenger survival.
+     </div>
+     """, unsafe_allow_html=True)
     
     st.markdown("---")
     
