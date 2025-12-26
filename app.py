@@ -82,27 +82,27 @@ if options == "Home":
     
     st.markdown("""
     <div class="main-text">
-    Welcome to the <b>Titanic Survival Prediction App</b>. Analyzed the Titanic dataset to uncover key survival factors and built a model to predict passenger survival.
+    Welcome to the <b>Titanic Survival Prediction App</b>. This project explores the famous Titanic dataset to understand the factors that influenced survival and predicts whether a passenger would survive based on their details.
     </div>
     """, unsafe_allow_html=True)
     
     st.markdown("---")
     
-    # 1. About this file (Moved to Top)
+    # 1. About this file (Text sanitized)
     st.subheader("ℹ️ About this file")
     st.info("""
     The sinking of the Titanic is one of the most infamous shipwrecks in history.
     
-    On April 15, 1912, during her maiden voyage, the widely considered “unsinkable” RMS Titanic sank after colliding with an iceberg. Unfortunately, there weren’t enough lifeboats for everyone on board, resulting in the death of 1502 out of 2224 passengers and crew.
+    On April 15, 1912, during her maiden voyage, the widely considered "unsinkable" RMS Titanic sank after colliding with an iceberg. Unfortunately, there weren't enough lifeboats for everyone on board, resulting in the death of 1502 out of 2224 passengers and crew.
     
     While there was some element of luck involved in surviving, it seems some groups of people were more likely to survive than others.
     
-    In this challenge, we ask you to build a predictive model that answers the question: “what sorts of people were more likely to survive?” using passenger data (ie name, age, gender, socio-economic class, etc).
+    In this challenge, we ask you to build a predictive model that answers the question: "what sorts of people were more likely to survive?" using passenger data (ie name, age, gender, socio-economic class, etc).
     """)
 
     st.markdown("---")
 
-    # 2. Project Workflow (Moved Below)
+    # 2. Project Workflow
     st.subheader("📂 Project Workflow")
     st.markdown("""
     <div class="main-text">
