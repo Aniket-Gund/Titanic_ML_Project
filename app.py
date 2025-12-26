@@ -9,8 +9,8 @@ import seaborn as sns
 st.set_page_config(page_title="Titanic ML Project", layout="wide")
 
 # ---------------- LOAD DATA ----------------
-DATA_PATH = "/mnt/data/titanic_updated.csv"
-MODEL_PATH = "/mnt/data/Titanic_ML_model.pkl"
+DATA_PATH = "titanic_updated.csv"
+MODEL_PATH = "Titanic_ML_model.pkl"
 
 @st.cache_data
 def load_data():
