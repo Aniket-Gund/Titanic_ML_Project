@@ -9,8 +9,7 @@ from datetime import datetime
 # Page Config
 # -------------------------
 st.set_page_config(
-    page_title="Titanic ML Project",
-    page_icon="🚢",
+    page_title="Titanic ML Project by Aniket Gund",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -72,13 +71,13 @@ st.sidebar.title("🚢 Titanic Project")
 st.sidebar.image("https://upload.wikimedia.org/wikipedia/commons/f/fd/RMS_Titanic_3.jpg", use_container_width=True)
 options = st.sidebar.radio("Navigate", ["Home", "EDA (Analysis)", "Prediction"])
 st.sidebar.markdown("---")
-st.sidebar.info("Titanic Survival Prediction & Analysis System")
+st.sidebar.info("Titanic Survival Prediction & Analysis System by Aniket Gund")
 
 # -------------------------
 # SECTION: HOME
 # -------------------------
 if options == "Home":
-    st.title("🚢 Titanic Machine Learning Project")
+    st.title("🚢 Titanic Machine Learning Project by Aniket Gund")
     
     st.markdown("""
      <div class="main-text">
@@ -260,7 +259,7 @@ elif options == "EDA (Analysis)":
         fig_corr = px.imshow(
             corr, text_auto=".2f", aspect="auto",
             color_continuous_scale="RdBu_r",
-            title="Correlation Heatmap (Excluding SibSp/Parch)"
+            title="Correlation Heatmap"
         )
         st.plotly_chart(fig_corr, use_container_width=True)
         figures.append(fig_corr)
@@ -348,7 +347,7 @@ elif options == "Prediction":
                 fare = st.number_input("4. Fare Amount (£)", min_value=0.0, max_value=600.0, value=32.0)
                 
                 # 5. Family Size
-                family_size = st.number_input("5. Family Size", min_value=1, max_value=11, value=1, 
+                family_size = st.number_input("5. Family Size(Total members including self)", min_value=1, max_value=11, value=1, 
                                               help="Includes siblings, spouses, parents, children, and yourself.")
                 
                 st.markdown("---")
