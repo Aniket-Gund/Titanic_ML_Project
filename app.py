@@ -82,8 +82,7 @@ if options == "Home":
     
     st.markdown("""
     <div class="main-text">
-    Welcome to the <b>Titanic Survival Prediction App</b>. This project explores the famous Titanic dataset to understand the factors that influenced survival and predicts whether a passenger would survive based on their details.
-    </div>
+    Welcome to the <b>Titanic Survival Prediction App</b>. Analyzed the Titanic dataset to uncover key survival factors and built a model to predict passenger survival.
     """, unsafe_allow_html=True)
     
     st.markdown("---")
