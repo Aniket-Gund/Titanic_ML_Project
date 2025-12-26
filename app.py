@@ -80,9 +80,10 @@ st.sidebar.info("Titanic Survival Prediction & Analysis System")
 if options == "Home":
     st.title("🚢 Titanic Machine Learning Project")
     
-    st.markdown("""
+   st.markdown("""
     <div class="main-text">
-    Welcome to the <b>Titanic Survival Prediction App</b>. Analyzed the Titanic dataset to uncover key survival factors and built a model to predict passenger survival.
+    Welcome to the <b>Titanic Survival Prediction App</b>.<br>
+    Analyzed the Titanic dataset to uncover key survival factors and built a model to predict passenger survival.
     </div>
     """, unsafe_allow_html=True)
     
@@ -102,20 +103,13 @@ if options == "Home":
 
     st.markdown("---")
 
-    # 2. Project Workflow (Updated to Horizontal Layout)
+    # 2. Project Workflow (Stacked Vertically)
     st.subheader("📂 Project Workflow")
     
-    # Using columns to display steps in a single horizontal line
-    c1, c2, c3, c4 = st.columns(4)
-    
-    with c1:
-        st.info("**1. Data Understanding**\nRows, columns & types")
-    with c2:
-        st.info("**2. Data Cleaning**\nMissing values & outliers")
-    with c3:
-        st.info("**3. EDA**\nVisualizing trends")
-    with c4:
-        st.success("**4. Machine Learning**\nRandom Forest Model")
+    st.info("**1. Data Understanding**\nRows, columns & types")
+    st.info("**2. Data Cleaning**\nMissing values & outliers")
+    st.info("**3. EDA**\nVisualizing trends")
+    st.success("**4. Machine Learning**\nRandom Forest Model")
        
 # -------------------------
 # SECTION: EDA (Analysis)
