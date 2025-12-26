@@ -256,6 +256,11 @@ elif options == "EDA (Analysis)":
         st.plotly_chart(fig_corr, use_container_width=True)
         figures.append(fig_corr)
 
+    # --- ROW 6: Statistical Summary ---
+    st.markdown("---")
+    st.subheader("📊 Statistical Summary")
+    st.dataframe(df_view.describe(), use_container_width=True)
+
   # --- Summary & Insights (Updated) ---
     st.markdown("---")
     st.subheader("💡 Analysis Summary")
