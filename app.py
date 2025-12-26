@@ -134,16 +134,7 @@ elif options == "EDA (Analysis)":
     if sel_sex:
         df_view = df_view[df_view['sex'].isin(sel_sex)]
 
-    # --- KPIs ---
-    kpi1, kpi2, kpi3, kpi4 = st.columns(4)
-    kpi1.metric("Passengers", f"{len(df_view):,}")
-    kpi2.metric("Survival Rate", f"{df_view['survived'].mean()*100:.1f}%")
-    kpi3.metric("Avg Age", f"{df_view['age'].mean():.1f} Years")
-    kpi4.metric("Avg Fare", f"£{df_view['fare'].mean():.2f}")
-    
-    st.markdown("---")
-    
-    figures = []
+   
 
     # --- ROW 1: Gender Analysis ---
     c1, c2 = st.columns(2)
