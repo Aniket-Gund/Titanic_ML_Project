@@ -84,7 +84,8 @@ if options == "Home":
     st.markdown("""
     <div class="main-text">
     Welcome to the <b>Titanic Survival Prediction App</b>. Analyzed the Titanic dataset to uncover key survival factors and built a model to predict passenger survival.
-
+    </div>
+    """, unsafe_allow_html=True)
 
      ### ℹ️ About this file
     st.info("""
