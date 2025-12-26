@@ -80,14 +80,16 @@ st.sidebar.info("Titanic Survival Prediction & Analysis System")
 if options == "Home":
     st.title("🚢 Titanic Machine Learning Project")
     
-    # Restored V1 Layout + New Text
     st.markdown("""
     <div class="main-text">
     Welcome to the <b>Titanic Survival Prediction App</b>. Analyzed the Titanic dataset to uncover key survival factors and built a model to predict passenger survival.
     </div>
     """, unsafe_allow_html=True)
-
-     ### ℹ️ About this file
+    
+    st.markdown("---")
+    
+    # 1. About this file (Moved to Top)
+    st.subheader("ℹ️ About this file")
     st.info("""
     The sinking of the Titanic is one of the most infamous shipwrecks in history.
     
@@ -97,19 +99,19 @@ if options == "Home":
     
     In this challenge, we ask you to build a predictive model that answers the question: “what sorts of people were more likely to survive?” using passenger data (ie name, age, gender, socio-economic class, etc).
     """)
-   
-    </div>
-    """, unsafe_allow_html=True)
-    
+
     st.markdown("---")
-     ### 📂 Project Workflow:
+
+    # 2. Project Workflow (Moved Below)
+    st.subheader("📂 Project Workflow")
+    st.markdown("""
+    <div class="main-text">
     1.  <b>Data Understanding</b>: Analyzing rows, columns, and data types.
     2.  <b>Data Cleaning</b>: Handling missing values and outliers.
     3.  <b>EDA (Exploratory Data Analysis)</b>: Visualizing relationships between features.
     4.  <b>Machine Learning</b>: Training a Random Forest Classifier.
-   
-
-    if not df.empty:
+    </div>
+    """, unsafe_allow_html=True)
        
 # -------------------------
 # SECTION: EDA (Analysis)
